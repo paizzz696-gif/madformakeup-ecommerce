@@ -1,0 +1,43 @@
+:root {
+    --mfm-black: #111111;
+    --mfm-white: #ffffff;
+    --mfm-red: #e8262d;
+    --mfm-gray: #f5f5f5;
+    --mfm-border: #e5e5e5;
+}
+
+body { font-family: 'DM Sans', system-ui, sans-serif; color: var(--mfm-black); background: var(--mfm-white); }
+
+.mfm-announce {
+    text-align: center; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    padding: 10px 16px; border-bottom: 1px solid var(--mfm-border); background: var(--mfm-white);
+}
+
+.mfm-header { border-bottom: 1px solid var(--mfm-border); background: var(--mfm-white); position: sticky; top: 0; z-index: 100; }
+.mfm-header-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+.mfm-nav a { color: var(--mfm-black); text-decoration: none; margin-right: 24px; font-weight: 500; font-size: 14px; }
+.mfm-wordmark { font-weight: 700; letter-spacing: .18em; font-size: 20px; color: var(--mfm-black); text-decoration: none; }
+.mfm-actions { display: flex; align-items: center; gap: 16px; }
+.mfm-action { color: var(--mfm-black); text-decoration: none; font-size: 18px; display: inline-flex; align-items: center; }
+.mfm-action:hover { color: var(--mfm-red); }
+.mfm-alert { border-radius: 0; }
+
+.mfm-hero { background: var(--mfm-gray); padding: 96px 0; text-align: center; }
+.mfm-hero h1 { font-weight: 700; letter-spacing: .1em; }
+
+.auth-wrap { max-width: 420px; margin: 64px auto; padding: 0 16px; }
+.auth-card { border: 1px solid var(--mfm-border); padding: 40px 32px; background: var(--mfm-white); }
+.auth-brand { text-align: center; font-weight: 700; font-size: 28px; margin-bottom: 40px; }
+.auth-title { font-size: 22px; font-weight: 700; }
+.auth-card .form-control { border-radius: 0; }
+.demo-creds { background: var(--mfm-gray); padding: 10px 14px; }
+
+.btn-mfm { background: var(--mfm-black); color: var(--mfm-white); border-radius: 0; padding: 10px 18px; font-weight: 500; width: 100%; }
+.btn-mfm:hover { background: var(--mfm-red); color: var(--mfm-white); }
+
+.mfm-footer { background: var(--mfm-black); color: #eee; }
+.mfm-footer-title { font-weight: 700; margin-bottom: 12px; }
+.mfm-footer-links li { margin-bottom: 8px; font-size: 14px; }
+.mfm-footer a { color: #ccc; text-decoration: none; }
+.mfm-footer a:hover { color: var(--mfm-white); }
+.mfm-footer-hr { border-color: #333; }
