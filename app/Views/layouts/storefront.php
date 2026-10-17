@@ -17,7 +17,7 @@
     <div class="container-xxl mfm-header-inner">
         <nav class="mfm-nav">
             <a href="<?= site_url('/') ?>">Beranda</a>
-            <!-- Tahap 4: Shop All & kategori ditambahkan di sini -->
+            <a href="<?= site_url('catalog') ?>">Katalog</a>
         </nav>
         <a href="<?= site_url('/') ?>" class="mfm-wordmark">MAD FOR MAKEUP</a>
         <div class="mfm-actions">
@@ -57,7 +57,8 @@
                 <h6 class="mfm-footer-title">Produk</h6>
                 <ul class="list-unstyled mfm-footer-links">
                     <li><a href="<?= site_url('/') ?>">Beranda</a></li>
-                    <!-- Tahap 4: daftar kategori -->
+                    <li><a href="<?= site_url('catalog') ?>">Semua Produk</a></li>
+                    <!-- 4.3+: daftar kategori dinamis -->
                 </ul>
             </div>
             <div class="col-6 col-md-3">
