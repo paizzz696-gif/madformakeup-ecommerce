@@ -5,13 +5,14 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
+use App\Models\ProductImageModel;
 use App\Models\ProductVariantModel;
 use App\Models\StockMovementModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\RedirectResponse;
 
 /**
- * CRUD PRODUK (ADMIN) — Tahap 4.4-b + 4.4-c
+ * CRUD PRODUK (ADMIN) — Tahap 4.4-b + 4.4-c + 4.4-d
  * Route (group admin, filter 'admin'):
  *   GET  admin/products                          -> index()        : list semua produk + search
  *   GET  admin/products/baru                     -> baru()         : form tambah
@@ -24,12 +25,20 @@ use CodeIgniter\HTTP\RedirectResponse;
  *   POST admin/products/(:num)/varian            -> varianSimpan($pid)       : tambah varian baru
  *   POST admin/products/(:num)/varian/(:num)     -> varianUpdate($pid,$vid)  : edit data varian (TANPA stok)
  *   POST admin/products/(:num)/varian/(:num)/stok -> varianStok($pid,$vid)   : catat stok masuk/keluar
+ *   [4.4-d]
+ *   GET  admin/products/(:num)/gambar              -> gambar($pid)            : halaman kelola gambar
+ *   POST admin/products/(:num)/gambar              -> gambarUpload($pid)      : upload 1 gambar baru
+ *   POST admin/products/(:num)/gambar/(:num)/utama -> gambarUtama($pid,$gid)  : set gambar utama
+ *   POST admin/products/(:num)/gambar/(:num)/hapus -> gambarHapus($pid,$gid)  : hapus gambar + file fisik
  *
- * Gambar dikelola menyusul di 4.4-d.
  * "Hapus" produk = arsip (is_active 0), bukan hard delete — biar history
  * varian, gambar, dan stock_movements tetap utuh (FK aman).
  * [4.4-c] Stok varian TIDAK BOLEH diedit langsung lewat update() — cuma lewat
  * catatMasuk/catatKeluar biar tiap perubahan kecatat di stock_movements.
+ * [4.4-d] Gambar produk: file diupload ke public/uploads/products/, path
+ * disimpan relatif terhadap uploads/. Hapus gambar = hapus row DB + file
+ * fisik. Gambar pertama otomatis jadi UTAMA; hapus gambar utama → badge
+ * pindah otomatis ke gambar tersisa pertama.
  */
 class Products extends BaseController
 {
@@ -317,5 +326,141 @@ class Products extends BaseController
             'success',
             'Stok ' . ($arah === 'out' ? 'keluar' : 'masuk') . ' ' . $qty . ' dicatat. Stok sekarang: ' . (int) ($terbaru['stock_quantity'] ?? 0) . '.'
         );
+    }
+
+    // ==================== [4.4-d] Kelola gambar produk ====================
+
+    /**
+     * Halaman kelola gambar satu produk.
+     */
+    public function gambar(int $productId): string
+    {
+        $produk = (new ProductModel())->find($productId);
+        if ($produk === null) {
+            throw PageNotFoundException::forPageNotFound('Produk tidak ditemukan: #' . $productId);
+        }
+
+        return view('admin/products/gambar', [
+            'produk' => $produk,
+            'gambar' => (new ProductImageModel())->untukProduk($productId),
+            'title'  => 'Kelola Gambar — Admin Mad For Makeup',
+        ]);
+    }
+
+    /**
+     * Proses upload 1 file gambar.
+     */
+    public function gambarUpload(int $productId): RedirectResponse
+    {
+        $productModel = new ProductModel();
+        if ($productModel->find($productId) === null) {
+            throw PageNotFoundException::forPageNotFound('Produk tidak ditemukan: #' . $productId);
+        }
+
+        // Validasi file: wajib upload, harus gambar, mime diizinkan, maks 2MB
+        $aturan = [
+            'gambar' => [
+                'label' => 'File gambar',
+                'rules' => 'uploaded[gambar]|is_image[gambar]'
+                         . '|mime_in[gambar,image/jpg,image/jpeg,image/png,image/webp]'
+                         . '|max_size[gambar,2048]',
+                'errors' => [
+                    'uploaded' => 'Pilih file gambar dulu.',
+                    'is_image' => 'File yang diupload bukan gambar.',
+                    'mime_in'  => 'Format harus JPG, JPEG, PNG, atau WEBP.',
+                    'max_size' => 'Ukuran file maksimal 2 MB.',
+                ],
+            ],
+        ];
+
+        if (! $this->validate($aturan)) {
+            return redirect()->back()
+                             ->with('error', 'Upload gagal — periksa file-nya.')
+                             ->withInput()
+                             ->with('errors', $this->validator->getErrors());
+        }
+
+        $file = $this->request->getFile('gambar');
+
+        // Pastikan folder tujuan ada → public/uploads/products/
+        $folder = FCPATH . 'uploads/products';
+        if (! is_dir($folder)) {
+            mkdir($folder, 0775, true);
+        }
+
+        // Pindahin file pakai nama acak (anti tabrakan nama file)
+        $namaFile = $file->getRandomName();
+        $file->move($folder, $namaFile);
+
+        $imageModel = new ProductImageModel();
+
+        // Simpan path RELATIF terhadap uploads/ → konsisten sama kebiasaan
+        // view lama yang nampilin: 'uploads/' . image_path
+        $sudahAda = $imageModel->untukProduk($productId);
+
+        $imageModel->insert([
+            'product_id' => $productId,
+            'image_path' => 'products/' . $namaFile,
+            // gambar PERTAMA otomatis jadi utama biar kartu katalog gak kosong
+            'is_primary' => $sudahAda === [] ? 1 : 0,
+            'sort_order' => $imageModel->urutanBerikutnya($productId),
+        ]);
+
+        return redirect()->back()->with('success', 'Gambar berhasil diupload.');
+    }
+
+    /**
+     * Set satu gambar jadi UTAMA.
+     */
+    public function gambarUtama(int $productId, int $imageId): RedirectResponse
+    {
+        $imageModel = new ProductImageModel();
+
+        // Gambar harus beneran milik produk ini (anti nyalain gambar produk lain)
+        $gambar = $imageModel->where('image_id', $imageId)
+                             ->where('product_id', $productId)
+                             ->first();
+        if ($gambar === null) {
+            throw PageNotFoundException::forPageNotFound('Gambar tidak ditemukan di produk ini.');
+        }
+
+        $imageModel->jadikanUtama($productId, $imageId);
+
+        return redirect()->back()->with('success', 'Gambar utama diperbarui.');
+    }
+
+    /**
+     * Hapus gambar (row DB + file fisiknya).
+     */
+    public function gambarHapus(int $productId, int $imageId): RedirectResponse
+    {
+        $imageModel = new ProductImageModel();
+
+        $gambar = $imageModel->where('image_id', $imageId)
+                             ->where('product_id', $productId)
+                             ->first();
+        if ($gambar === null) {
+            throw PageNotFoundException::forPageNotFound('Gambar tidak ditemukan di produk ini.');
+        }
+
+        // Hapus row di DB dulu
+        $imageModel->delete($imageId);
+
+        // Hapus file fisiknya (kalau beneran ada). Pakai realpath biar path
+        // hasil input gak bisa manjur keluar folder uploads/ (aman).
+        $realPath   = realpath(FCPATH . 'uploads/' . $gambar['image_path']);
+        $folderAsli = realpath(FCPATH . 'uploads');
+        if ($realPath !== false && $folderAsli !== false && str_starts_with($realPath, $folderAsli)) {
+            unlink($realPath);
+        }
+
+        // Kalau yang kehapus tadi UTAMA, angkat gambar pertama yang tersisa
+        // jadi utama — biar gak ada produk tanpa gambar utama di katalog.
+        $sisa = $imageModel->untukProduk($productId);
+        if ($sisa !== [] && (int) $gambar['is_primary'] === 1) {
+            $imageModel->jadikanUtama($productId, (int) $sisa[0]['image_id']);
+        }
+
+        return redirect()->back()->with('success', 'Gambar dihapus.');
     }
 }

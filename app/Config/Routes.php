@@ -8,7 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 
 // ---------- Publik ----------
  $routes->get('/', 'Home::index');
- $routes->get('catalog', 'Catalog::index'); 
+ $routes->get('catalog', 'Catalog::index');
  $routes->get('product/(:segment)', 'Catalog::detail/$1');
 
 // ---------- Autentikasi ----------
@@ -34,8 +34,16 @@ use CodeIgniter\Router\RouteCollection;
     $routes->get('products/(:num)/edit', 'Products::edit/$1');
     $routes->post('products/(:num)', 'Products::update/$1');
     $routes->post('products/(:num)/toggle', 'Products::toggle/$1');
+
+    // [4.4-c] Kelola varian & stok per produk
     $routes->get('products/(:num)/varian', 'Products::varian/$1');
- $routes->post('products/(:num)/varian', 'Products::varianSimpan/$1');
- $routes->post('products/(:num)/varian/(:num)', 'Products::varianUpdate/$1/$2');
- $routes->post('products/(:num)/varian/(:num)/stok', 'Products::varianStok/$1/$2');
+    $routes->post('products/(:num)/varian', 'Products::varianSimpan/$1');
+    $routes->post('products/(:num)/varian/(:num)', 'Products::varianUpdate/$1/$2');
+    $routes->post('products/(:num)/varian/(:num)/stok', 'Products::varianStok/$1/$2');
+
+    // [4.4-d] Kelola gambar produk
+    $routes->get('products/(:num)/gambar', 'Products::gambar/$1');
+    $routes->post('products/(:num)/gambar', 'Products::gambarUpload/$1');
+    $routes->post('products/(:num)/gambar/(:num)/utama', 'Products::gambarUtama/$1/$2');
+    $routes->post('products/(:num)/gambar/(:num)/hapus', 'Products::gambarHapus/$1/$2');
 });

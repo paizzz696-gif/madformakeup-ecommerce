@@ -95,6 +95,10 @@
                                 <a href="<?= site_url('admin/products/' . $pid . '/varian') ?>" class="btn btn-sm btn-outline-dark" title="Kelola varian & stok">
                                     <i class="bi bi-tags"></i>
                                 </a>
+                                <!-- [4.4-d] Kelola gambar -->
+                                <a href="<?= site_url('admin/products/' . $pid . '/gambar') ?>" class="btn btn-sm btn-outline-info" title="Kelola gambar">
+                                    <i class="bi bi-images"></i>
+                                </a>
                                 <?= form_open('admin/products/' . $pid . '/toggle', ['class' => 'd-inline m-0']) ?>
                                     <button type="submit" class="btn btn-sm btn-outline-<?= (int) $p['is_active'] === 1 ? 'secondary' : 'success' ?>">
                                         <?= (int) $p['is_active'] === 1 ? 'Arsipkan' : 'Aktifkan' ?>
