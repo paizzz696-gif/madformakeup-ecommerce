@@ -8,6 +8,7 @@ use CodeIgniter\Router\RouteCollection;
 
 // ---------- Publik ----------
  $routes->get('/', 'Home::index');
+ $routes->get('catalog', 'Catalog::index'); 
 
 // ---------- Autentikasi ----------
  $routes->get('register', 'Auth::register');

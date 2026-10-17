@@ -5,10 +5,10 @@ namespace App\Models;
 use CodeIgniter\Model;
 
 /**
- * MODEL PRODUK — Tahap 4.1 (disesuaikan skema asli)
+ * MODEL PRODUK — Tahap 4.1 (skema asli) + 4.2 (query katalog)
  * Skema: products(product_id PK, category_id FK, name, slug, description, is_active, created_at, updated_at)
  * PENTING: products GAK punya kolom price — harga ada di product_variants!
- * "Harga mulai dari" dihitung dari MIN(price) varian aktif → method hargaMulai().
+ * "Harga mulai dari" = MIN(price) varian aktif.
  */
 class ProductModel extends Model
 {
@@ -58,7 +58,8 @@ class ProductModel extends Model
     }
 
     /**
-     * Harga termurah dari varian aktif — buat badge "Mulai Rp xx" di katalog (4.2).
+     * Harga termurah varian aktif untuk SATU produk.
+     * (Dipakai ModelSmokeSeeder — jangan dihapus.)
      */
     public function hargaMulai(int $productId): ?float
     {
@@ -69,6 +70,59 @@ class ProductModel extends Model
                         ->get()
                         ->getRowArray();
 
-        return $row ? (float) $row['harga'] : null;
+        // Produk tanpa varian aktif -> MIN(price) = NULL -> balikin null, JANGAN 0.0
+        return ($row && $row['harga'] !== null) ? (float) $row['harga'] : null;
+    }
+
+    /**
+     * [4.2] Peta [product_id => image_path] gambar utama untuk banyak produk sekaligus.
+     * 1 query buat semua produk di halaman — hindari N+1 query.
+     */
+    public function gambarUtamaBanyak(array $productIds): array
+    {
+        if ($productIds === []) {
+            return [];
+        }
+
+        $rows = $this->db->table('product_images')
+                         ->select('product_id, image_path')
+                         ->whereIn('product_id', $productIds)
+                         ->where('is_primary', 1)
+                         ->orderBy('sort_order', 'ASC')
+                         ->orderBy('image_id', 'ASC')
+                         ->get()
+                         ->getResultArray();
+
+        $map = [];
+        foreach ($rows as $r) {
+            $map[$r['product_id']] = $r['image_path'];
+        }
+
+        return $map;
+    }
+
+    /**
+     * [4.2] Peta [product_id => harga termurah] varian aktif untuk banyak produk sekaligus.
+     */
+    public function hargaMulaiBanyak(array $productIds): array
+    {
+        if ($productIds === []) {
+            return [];
+        }
+
+        $rows = $this->db->table('product_variants')
+                         ->select('product_id, MIN(price) AS harga')
+                         ->whereIn('product_id', $productIds)
+                         ->where('is_active', 1)
+                         ->groupBy('product_id')
+                         ->get()
+                         ->getResultArray();
+
+        $map = [];
+        foreach ($rows as $r) {
+            $map[$r['product_id']] = (float) $r['harga'];
+        }
+
+        return $map;
     }
 }
