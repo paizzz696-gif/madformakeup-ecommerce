@@ -7,18 +7,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="<?= base_url('assets/css/admin.css') ?>" rel="stylesheet">
+    <!-- [revamp UI] Lapisan polish DI ATAS admin.css — gak menimpa strukturnya -->
+    <link href="<?= base_url('assets/css/admin-theme.css') ?>" rel="stylesheet">
 </head>
 <body>
 <div class="admin-shell">
     <aside class="admin-sidebar">
         <div class="admin-brand">MAD<span>.</span> ADMIN</div>
         <nav class="admin-nav">
-            <!-- [4.4-b] Dashboard cuma aktif di /admin doang.
-                 Dulu url_is('admin*') → dobel aktif kalau ada menu /admin/... lain. -->
+            <!-- Dashboard cuma aktif di /admin doang (bukan 'admin*') -->
             <a href="<?= site_url('admin') ?>" class="<?= url_is('admin') ? 'active' : '' ?>">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <!-- [4.4-b] Menu baru: daftar produk + kelola varian & stok -->
+            <!-- [4.4-b] Menu produk + kelola varian & stok -->
             <a href="<?= site_url('admin/products') ?>" class="<?= url_is('admin/products*') ? 'active' : '' ?>">
                 <i class="bi bi-box-seam"></i> Produk
             </a>
@@ -38,10 +39,16 @@
         </header>
         <main class="admin-content p-4 flex-grow-1">
             <?php if ($f = session()->getFlashdata('success')): ?>
-                <div class="alert alert-success"><?= esc($f) ?></div>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle"></i> <?= esc($f) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                </div>
             <?php endif; ?>
             <?php if ($f = session()->getFlashdata('error')): ?>
-                <div class="alert alert-danger"><?= esc($f) ?></div>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i> <?= esc($f) ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Tutup"></button>
+                </div>
             <?php endif; ?>
             <?= $this->renderSection('content') ?>
         </main>

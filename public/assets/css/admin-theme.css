@@ -1,0 +1,185 @@
+/* =========================================================
+   ADMIN THEME — lapisan polish di ATAS admin.css.
+   Prinsip: HANYA ubah warna, radius, bayangan, hover.
+   Gak nyentuh lebar/posisi/struktur biar layout aman.
+   ========================================================= */
+
+/* ---------- DASAR ---------- */
+.admin-shell { background: #f6f7fb; }
+
+/* ---------- SIDEBAR: gradasi gelap plum → magenta ---------- */
+.admin-shell .admin-sidebar {
+    background: linear-gradient(180deg, #170f1f 0%, #26102e 55%, #431638 100%);
+}
+.admin-shell .admin-brand {
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: .08em;
+}
+.admin-shell .admin-brand span { color: #f472b6; }
+
+.admin-shell .admin-nav a {
+    color: rgba(255, 255, 255, .72);
+    border-radius: .6rem;
+    margin: 2px 10px;
+    padding: .6rem .85rem;
+    text-decoration: none;
+    transition: background .15s ease, color .15s ease;
+}
+.admin-shell .admin-nav a:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+.admin-shell .admin-nav a.active {
+    background: linear-gradient(135deg, #ec4899, #be185d);
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(236, 72, 153, .35);
+}
+
+.admin-shell .admin-sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+.admin-shell .admin-sidebar-footer a {
+    color: rgba(255, 255, 255, .72);
+    text-decoration: none;
+}
+.admin-shell .admin-sidebar-footer a:hover { color: #fff; }
+
+.admin-shell .admin-logout {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, .22);
+    color: rgba(255, 255, 255, .85);
+    border-radius: .6rem;
+    padding: .5rem .85rem;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+}
+.admin-shell .admin-logout:hover {
+    background: rgba(239, 68, 68, .25);
+    border-color: rgba(239, 68, 68, .5);
+    color: #fff;
+}
+
+/* ---------- TOPBAR ---------- */
+.admin-shell .admin-topbar {
+    background: #fff;
+    border-bottom: 1px solid #f1f3f7;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, .05);
+}
+
+/* ---------- HERO SAMBUTAN ---------- */
+.dash-hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 1.5rem;
+    border-radius: 1.1rem;
+    color: #fff;
+    background: linear-gradient(120deg, #1e1b2e 0%, #4a1942 55%, #8a1d5c 100%);
+    box-shadow: 0 10px 30px rgba(138, 29, 92, .25);
+}
+.dash-hero-salam {
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    opacity: .75;
+    margin-bottom: .15rem;
+}
+.dash-hero-sub { color: rgba(255, 255, 255, .75); font-size: .9rem; }
+
+/* ---------- KARTU STATISTIK GRADIENT ---------- */
+.statx {
+    display: flex;
+    align-items: center;
+    gap: .9rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: 1rem;
+    color: #fff;
+    height: 100%;
+    box-shadow: 0 4px 14px rgba(16, 24, 40, .08);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.statx:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px rgba(16, 24, 40, .16);
+}
+.statx-icon {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: .9rem;
+    background: rgba(255, 255, 255, .22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+.statx-label {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    opacity: .85;
+}
+.statx-value { font-size: 1.7rem; font-weight: 700; line-height: 1.15; }
+
+.statx-blue   { background: linear-gradient(135deg, #6366f1, #7c3aed); }
+.statx-pink   { background: linear-gradient(135deg, #ec4899, #be185d); }
+.statx-orange { background: linear-gradient(135deg, #f97316, #ea580c); }
+.statx-green  { background: linear-gradient(135deg, #10b981, #047857); }
+
+/* ---------- PANEL DASAR ---------- */
+.dash-panel {
+    background: #fff;
+    border: 1px solid #eef0f4;
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+    overflow: hidden;
+}
+.dash-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    padding: .9rem 1.1rem;
+    border-bottom: 1px solid #f1f3f7;
+    font-weight: 600;
+    font-size: .95rem;
+}
+.dash-panel-body { padding: 1rem 1.1rem; }
+.dash-panel .table td { border-color: #f4f5f9; }
+
+/* ---------- BARIS STOK KRITIS ---------- */
+.dash-kritis {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .7rem;
+    border-radius: .7rem;
+    border: 1px solid transparent;
+    transition: background .15s ease, border-color .15s ease;
+}
+.dash-kritis:hover { background: #fff1f2; border-color: #fecdd3; }
+.dash-kritis + .dash-kritis { margin-top: .4rem; }
+
+/* ---------- CHIP PRODUK TANPA GAMBAR ---------- */
+.dash-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem .85rem;
+    border-radius: 999px;
+    background: #fdf2f8;
+    border: 1px solid #fbcfe8;
+    color: #9d174d;
+    font-size: .85rem;
+    text-decoration: none;
+    transition: transform .15s ease, background .15s ease;
+}
+.dash-chip:hover {
+    background: #fce7f3;
+    color: #831843;
+    transform: translateY(-2px);
+}
