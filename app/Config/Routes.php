@@ -26,4 +26,12 @@ use CodeIgniter\Router\RouteCollection;
 // ---------- Admin (wajib login + role admin) ----------
  $routes->group('admin', ['filter' => 'admin', 'namespace' => 'App\Controllers\Admin'], static function (RouteCollection $routes) {
     $routes->get('/', 'Dashboard::index');
+
+    // [4.4-b] CRUD produk
+    $routes->get('products', 'Products::index');
+    $routes->get('products/baru', 'Products::baru');
+    $routes->post('products', 'Products::simpan');
+    $routes->get('products/(:num)/edit', 'Products::edit/$1');
+    $routes->post('products/(:num)', 'Products::update/$1');
+    $routes->post('products/(:num)/toggle', 'Products::toggle/$1');
 });

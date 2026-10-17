@@ -13,10 +13,16 @@
     <aside class="admin-sidebar">
         <div class="admin-brand">MAD<span>.</span> ADMIN</div>
         <nav class="admin-nav">
-            <a href="<?= site_url('admin') ?>" class="<?= url_is('admin*') ? 'active' : '' ?>">
+            <!-- [4.4-b] Dashboard cuma aktif di /admin doang.
+                 Dulu url_is('admin*') → dobel aktif kalau ada menu /admin/... lain. -->
+            <a href="<?= site_url('admin') ?>" class="<?= url_is('admin') ? 'active' : '' ?>">
                 <i class="bi bi-speedometer2"></i> Dashboard
             </a>
-            <!-- Tahap 4: Katalog | Tahap 5: Pesanan & Stok | Tahap 6: Pembayaran & Pengiriman | Tahap 7: Laporan -->
+            <!-- [4.4-b] Menu baru: daftar produk + kelola varian & stok -->
+            <a href="<?= site_url('admin/products') ?>" class="<?= url_is('admin/products*') ? 'active' : '' ?>">
+                <i class="bi bi-box-seam"></i> Produk
+            </a>
+            <!-- Tahap 5: Pesanan & Stok | Tahap 6: Pembayaran & Pengiriman | Tahap 7: Laporan -->
         </nav>
         <div class="admin-sidebar-footer">
             <a href="<?= site_url('/') ?>"><i class="bi bi-shop"></i> Lihat Toko</a>
