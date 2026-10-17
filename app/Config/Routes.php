@@ -9,6 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 // ---------- Publik ----------
  $routes->get('/', 'Home::index');
  $routes->get('catalog', 'Catalog::index'); 
+ $routes->get('product/(:segment)', 'Catalog::detail/$1');
 
 // ---------- Autentikasi ----------
  $routes->get('register', 'Auth::register');

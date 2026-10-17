@@ -5,7 +5,7 @@ namespace App\Models;
 use CodeIgniter\Model;
 
 /**
- * MODEL VARIAN PRODUK — Tahap 4.1 (disesuaikan skema asli)
+ * MODEL VARIAN PRODUK — Tahap 4.1 (disesuaikan skema asli) + 4.3 (varian aktif)
  * Skema: product_variants(variant_id PK, product_id FK, sku, shade, size, price, stock_quantity, is_active, created_at, updated_at)
  * Catatan arsitektur: setiap perubahan stok WAJIB tercatat di stock_movements.
  * Method stok (kurangi/tambah) sengaja masuk Tahap 4.4 bareng StockMovementModel.
@@ -33,6 +33,21 @@ class ProductVariantModel extends Model
     {
         return $this->where('product_id', $productId)
                     ->orderBy('shade', 'ASC')
+                    ->findAll();
+    }
+
+    /**
+     * [4.3] Varian AKTIF satu produk buat halaman publik.
+     * Urut: shade -> size -> harga.
+     * (untukProduk() tetap tanpa filter — masih dipakai admin 4.4 yang butuh semua varian.)
+     */
+    public function aktifUntukProduk(int $productId): array
+    {
+        return $this->where('product_id', $productId)
+                    ->where('is_active', 1)
+                    ->orderBy('shade', 'ASC')
+                    ->orderBy('size', 'ASC')
+                    ->orderBy('price', 'ASC')
                     ->findAll();
     }
 

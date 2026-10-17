@@ -4,11 +4,14 @@ namespace App\Controllers;
 
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
+use App\Models\ProductVariantModel;
+use App\Models\ProductImageModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 /**
- * KATALOG PUBLIK — Tahap 4.2
- * Listing produk aktif + search (q) + filter kategori (kategori).
- * Route: GET catalog
+ * KATALOG PUBLIK — Tahap 4.2 (listing) + 4.3 (detail)
+ * Route: GET catalog            -> index()  : listing + search + filter
+ * Route: GET product/(:segment) -> detail() : detail produk by slug
  */
 class Catalog extends BaseController
 {
@@ -53,5 +56,37 @@ class Catalog extends BaseController
         ];
 
         return view('catalog/index', $data);
+    }
+
+    /**
+     * [4.3] Halaman detail produk by slug.
+     * Produk harus is_active = 1; slug ga ketemu -> 404 beneran.
+     */
+    public function detail(string $slug): string
+    {
+        $productModel = new ProductModel();
+        $variantModel = new ProductVariantModel();
+        $imageModel   = new ProductImageModel();
+
+        $produk = $productModel->withKategori()
+                               ->hanyaAktif()
+                               ->where('products.slug', $slug)
+                               ->first();
+
+        if ($produk === null) {
+            throw PageNotFoundException::forPageNotFound('Produk tidak ditemukan: ' . $slug);
+        }
+
+        $pid = (int) $produk['product_id'];
+
+        $data = [
+            'produk'     => $produk,
+            'varianList' => $variantModel->aktifUntukProduk($pid),
+            'gambarList' => $imageModel->untukProduk($pid),
+            'hargaMulai' => $productModel->hargaMulai($pid),
+            'title'      => $produk['name'] . ' — Mad For Makeup',
+        ];
+
+        return view('catalog/detail', $data);
     }
 }
