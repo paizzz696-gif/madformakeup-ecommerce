@@ -26,6 +26,12 @@ class ProductVariantModel extends Model
     protected $allowedFields  = ['product_id', 'sku', 'shade', 'size', 'price', 'stock_quantity', 'is_active'];
 
     protected $validationRules = [
+        // [FIX 4.4-c] WAJIB ada: placeholder {variant_id} di rule SKU butuh
+        // field ini punya rule sendiri, kalau nggak CI lempar LogicException
+        // pas insert varian baru. permit_empty = insert tetap lolos (variant_id
+        // memang belum ada saat nambah); is_natural_no_zero = kalau ada
+        // nilainya, harus >= 1.
+        'variant_id'     => 'permit_empty|is_natural_no_zero',
         'product_id'     => 'required|is_natural_no_zero',
         'sku'            => 'required|alpha_numeric_punct|max_length[50]|is_unique[product_variants.sku,variant_id,{variant_id}]',
         'shade'          => 'permit_empty|max_length[100]',

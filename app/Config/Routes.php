@@ -34,4 +34,8 @@ use CodeIgniter\Router\RouteCollection;
     $routes->get('products/(:num)/edit', 'Products::edit/$1');
     $routes->post('products/(:num)', 'Products::update/$1');
     $routes->post('products/(:num)/toggle', 'Products::toggle/$1');
+    $routes->get('products/(:num)/varian', 'Products::varian/$1');
+ $routes->post('products/(:num)/varian', 'Products::varianSimpan/$1');
+ $routes->post('products/(:num)/varian/(:num)', 'Products::varianUpdate/$1/$2');
+ $routes->post('products/(:num)/varian/(:num)/stok', 'Products::varianStok/$1/$2');
 });
