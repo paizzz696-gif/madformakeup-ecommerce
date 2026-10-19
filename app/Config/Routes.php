@@ -21,6 +21,20 @@ use CodeIgniter\Router\RouteCollection;
 // ---------- Pelanggan (wajib login) ----------
  $routes->group('', ['filter' => 'auth'], static function (RouteCollection $routes) {
     $routes->get('account', 'Account::index');
+
+    // [5.2] Tambah ke keranjang
+    $routes->post('keranjang/tambah', 'Cart::tambah');
+
+    // [5.3] Halaman + aksi keranjang
+    $routes->get('keranjang', 'Cart::index');
+    $routes->post('keranjang/(:num)/qty', 'Cart::ubahQty/$1');
+    $routes->post('keranjang/(:num)/hapus', 'Cart::hapus/$1');
+
+    // [5.4] Checkout & pembuatan pesanan
+    $routes->get('checkout', 'Checkout::index');
+    $routes->post('checkout/proses', 'Checkout::proses');
+    $routes->get('checkout/sukses/(:segment)', 'Checkout::sukses/$1');
+    $routes->post('checkout/(:segment)/bayar', 'Checkout::bayar/$1');
 });
 
 // ---------- Admin (wajib login + role admin) ----------

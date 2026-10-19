@@ -11,6 +11,15 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
+<?php
+    // [5.3] Jumlah pcs di keranjang aktif user yang lagi login — buat badge navbar.
+    // Guest = 0 (ikonnya tetap tampil; pas diklik dibawa ke halaman login).
+    $mfmJmlKeranjang = 0;
+    if (session()->get('user_id') !== null) {
+        $mfmJmlKeranjang = model('CartItemModel')->jumlahItemUser((int) session()->get('user_id'));
+    }
+?>
+
 <div class="mfm-announce">MAD FOR MAKEUP — PROYEK AKADEMIK E-COMMERCE (DEMO LOKAL)</div>
 
 <header class="mfm-header">
@@ -21,6 +30,15 @@
         </nav>
         <a href="<?= site_url('/') ?>" class="mfm-wordmark">MAD FOR MAKEUP</a>
         <div class="mfm-actions">
+            <!-- [5.3] Ikon keranjang + badge jumlah item -->
+            <a href="<?= site_url('keranjang') ?>" class="mfm-action position-relative" title="Keranjang belanja">
+                <i class="bi bi-bag"></i>
+                <?php if ($mfmJmlKeranjang > 0): ?>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.6rem;">
+                        <?= $mfmJmlKeranjang > 99 ? '99+' : $mfmJmlKeranjang ?>
+                    </span>
+                <?php endif; ?>
+            </a>
             <?php if (session()->get('user_id')): ?>
                 <a href="<?= site_url('account') ?>" class="mfm-action" title="Akun saya">
                     <i class="bi bi-person"></i>
